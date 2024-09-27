@@ -1,14 +1,114 @@
-<!DOCTYPE html><html lang="en>
-                 <head>
-                 <style>
-                 * {
-                 margin: 0;
-                 padding: 0;
-                 </style>
-                 </head>
-                 <body>
-                 <div contenteditable="true"></div>
-                 <script>
-                 </script>
-                 </body>
-                 </html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Marked</title>
+    <style>
+        :root {
+            --accent: #8f7f6f7f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-size: 14px;
+            background: #fffefd;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #343332;
+                color: #fffefd;
+            }
+        }
+
+        #content {
+            outline: none;
+            display: block;
+            max-width: 1000px;
+            width: 100vw;
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 16px max(24px, calc((100vw - 1000px) / 2));
+            min-height: calc(100vh - 32px);
+        }
+
+        #content>* {
+            margin: 8px 0;
+        }
+
+        .h1,
+        .h2,
+        .h3 {
+            font-weight: 600;
+        }
+
+        .h1 {
+            font-size: 2em;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 6px;
+        }
+
+        .h2 {
+            font-size: 1.6em;
+        }
+
+        .h3 {
+            font-size: 1.3em;
+        }
+
+        .tag {
+            font-weight: 600;
+            background: var(--accent);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .note {
+            opacity: 0.72;
+            padding-left: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div contenteditable="true" id="content" spellcheck="false" oninput="input()"></div>
+    <script>
+        const content = document.querySelector('#content');
+        const md = [
+            ['# ', 'h1'],
+            ['## ', 'h2'],
+            ['### ', 'h3'],
+            ['- ', 'note'],
+            ['+ ', 'tag']
+        ];
+
+        content.innerHTML = localStorage.getItem('content');
+        if (!content.innerHTML) content.innerHTML = '<div class="h1"># New Note</div><div>Your shiny new note</div>';
+
+        function input() {
+            for (let e of content.children) {
+                reformat(e);
+            }
+            localStorage.setItem('content', content.innerHTML);
+        }
+
+        function reformat(e) {
+            for (let i of md) {
+                if (e.innerText.indexOf(i[0]) == 0) {
+                    e.classList.add(i[1]);
+                } else {
+                    e.classList.remove(i[1]);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
